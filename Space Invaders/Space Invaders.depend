@@ -1,0 +1,35 @@
+# depslib dependency file v1.0
+1462133363 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/main.cpp
+	<cstdlib>
+	<stdlib.h>
+	<iostream>
+	"GameObject.h"
+	"Spaceship.h"
+	<SDL/SDL.h>
+
+1462133103 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/src/GameObject.cpp
+	"GameObject.h"
+	<SDL/SDL.h>
+
+1462131189 /home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/include/GameObject.h
+	<SDL/SDL.h>
+
+1462134024 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/src/Spaceship.cpp
+	"GameObject.h"
+	"Spaceship.h"
+	"Bullet.h"
+	<vector>
+	<SDL/SDL.h>
+
+1462134205 /home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/include/Spaceship.h
+	<vector>
+	"GameObject.h"
+	"Bullet.h"
+	<SDL/SDL.h>
+
+1462134072 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/src/Bullet.cpp
+	"Bullet.h"
+
+1462134486 /home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/include/Bullet.h
+	"GameObject.h"
+
