@@ -9,6 +9,7 @@
 
 #include "GameObject.h"
 #include "Spaceship.h"
+#include "Block.h"
 
 #include <SDL/SDL.h>
 
@@ -25,6 +26,7 @@ void Quit();
 //Variables
 Spaceship player;
 std::vector<Bullet> bullets;
+std::vector<Block> blocks;
 
 int main ( int argc, char** argv )
 {
@@ -69,6 +71,8 @@ void Load(){
 
     screen = SDL_SetVideoMode(600, 500, 32, SDL_SWSURFACE);
 
+    blocks.push_back(Block());
+
 }
 
 void Logic(){
@@ -87,6 +91,13 @@ void Logic(){
 
     for(int i=0; i<bullets.size(); i++){
         bullets[i].Move();
+        for(int j=0; j<blocks.size(); j++){
+            if(bullets[i].Intersects(blocks[j].rect)){
+                if(blocks[j].Damage()){
+                    blocks.erase(blocks.begin()+j);
+                }
+            }
+        }
         if(bullets[i].rect.y < 0){
             bullets.erase(bullets.begin() + i);
         }
@@ -102,6 +113,10 @@ void DrawScreen(){
 
     for(int i=0; i<bullets.size(); i++){
         SDL_FillRect(screen, &bullets[i].rect, 253);
+    }
+
+    for(int i=0; i<blocks.size(); i++){
+        SDL_FillRect(screen, &blocks[i].rect, 0x0000dd00);
     }
 
     SDL_Flip(screen);
