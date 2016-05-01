@@ -79,12 +79,17 @@ void Logic(){
         player.Move(-10, 0);
     }else if(keystates[SDLK_d]){
         player.Move(10, 0);
-    }else if(keystates[SDLK_SPACE]){
+    }
+
+    if(keystates[SDLK_SPACE]){
         player.Shot(bullets);
     }
 
     for(int i=0; i<bullets.size(); i++){
         bullets[i].Move();
+        if(bullets[i].rect.y < 0){
+            bullets.erase(bullets.begin() + i);
+        }
     }
 
 }
