@@ -11,8 +11,10 @@
 class Spaceship : public GameObject
 {
     public:
+        int lifes;
         Spaceship();
         void Shot(std::vector<Bullet> &ls);
+        void Damage();
 };
 
 #endif // SPACESHIP_H

@@ -1,13 +1,16 @@
 # depslib dependency file v1.0
-1462138656 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/main.cpp
+1462146629 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/main.cpp
 	<cstdlib>
 	<stdlib.h>
 	<iostream>
 	<vector>
+	<time.h>
 	"GameObject.h"
 	"Spaceship.h"
 	"Block.h"
 	"Alien.h"
+	"Bullet.h"
+	"AlienBullet.h"
 	<SDL/SDL.h>
 
 1462136445 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/src/GameObject.cpp
@@ -17,14 +20,14 @@
 1462136156 /home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/include/GameObject.h
 	<SDL/SDL.h>
 
-1462134024 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/src/Spaceship.cpp
+1462146559 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/src/Spaceship.cpp
 	"GameObject.h"
 	"Spaceship.h"
 	"Bullet.h"
 	<vector>
 	<SDL/SDL.h>
 
-1462134205 /home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/include/Spaceship.h
+1462146539 /home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/include/Spaceship.h
 	<vector>
 	"GameObject.h"
 	"Bullet.h"
@@ -43,9 +46,22 @@
 	"Block.h"
 	"GameObject.h"
 
-1462138037 /home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/include/Alien.h
+1462144936 /home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/include/Alien.h
 	"GameObject.h"
+	"Bullet.h"
+	"AlienBullet.h"
+	<vector>
 
-1462138323 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/src/Alien.cpp
+1462144925 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/src/Alien.cpp
 	"Alien.h"
+	"AlienBullet.h"
+	<vector>
+	<iostream>
+
+1462146120 /home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/include/AlienBullet.h
+	"Bullet.h"
+
+1462146159 source:/home/franck/Documentos/Git/Space-Invaders-with-Cpp/Space Invaders/src/AlienBullet.cpp
+	"AlienBullet.h"
+	"GameObject.h"
 
