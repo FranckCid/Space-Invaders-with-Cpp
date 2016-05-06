@@ -22,6 +22,12 @@
 SDL_Surface *screen=NULL, *spritesheet=NULL;
 SDL_Event event;
 
+//Game Methods
+void LoadSprites();
+void Keyboard();
+void CheckUnitys();
+void ResetAll();
+
 //Engine methods
 void Load();
 void Logic();
@@ -90,30 +96,14 @@ void Load(){
 
     screen = SDL_SetVideoMode(600, 500, 32, SDL_SWSURFACE);
 
-    for(int j=0; j<5; j++){
-        for(int i=0; i<11; i++){
-            aliens.push_back(Alien(35*i+35, 35*j+35));
-        }
-    }
+    LoadSprites();
 
-    for(int k=1; k<5; k++){
-        /*for(int i=1; i<4; i++){
-            blocks.push_back(Block(20*i+99*k, 1+340, 0));
-        }
-        for(int j=1; j<3; j++){
-            for(int i=1; i<4; i++){
-                if(i!=2)
-                    blocks.push_back(Block(20*i+99*k, 20*j+340, 0));
-            }
-        }*/
-        for(int j=0; j<4; j++){
-            for(int i=0; i<4; i++){
-                blocks.push_back(Block(20*i+99*k, 20*j+340, 0));
-            }
-        }
-    }
+}
 
+void LoadSprites(){
     spritesheet = IMG_Load("sprites/space_invaders.png");
+
+    ResetAll();
 
     sprites.alien1[0] = {7, 225, 16, 16};
     sprites.alien2[0] = {74, 225, 24, 16};
@@ -133,12 +123,10 @@ void Load(){
     sprites.blocks[2][1] = {480+12*3, 210, 12, 12};
     sprites.blocks[2][2] = {480+12*3, 210, 12, 12};
     sprites.blocks[2][3] = {480+12*3, 210, 12, 12};
-
 }
 
 int tick=0, counter=0, dirx=1, toshoot=0;
-void Logic(){
-
+void Keyboard(){
     const Uint8 *keystates = SDL_GetKeyState(NULL);
 
     if(keystates[SDLK_a]){
@@ -157,7 +145,9 @@ void Logic(){
         player.Shot(bullets);
         toshoot = 0;
     }
+}
 
+void CheckUnitys(){
     for(int i=0; i<bullets.size(); i++){
         bullets[i].Move();
         for(int j=0; j<blocks.size(); j++){
@@ -193,11 +183,45 @@ void Logic(){
             ebullets.erase(ebullets.begin() + i);
         }
     }
+}
+
+void ResetAll(){
+    aliens.clear();
+    bullets.clear();
+    blocks.clear();
+    ebullets.clear();
+    for(int j=0; j<5; j++){
+        for(int i=0; i<11; i++){
+            aliens.push_back(Alien(35*i+35, 35*j+35));
+        }
+    }
+    for(int k=1; k<5; k++){
+        for(int j=0; j<4; j++){
+            for(int i=0; i<4; i++){
+                blocks.push_back(Block(20*i+99*k, 20*j+340, 0));
+            }
+        }
+    }
+}
+
+void Loose(){
+    std::cout << "YOU LOOSE, CHANGE SCENE\n";
+    ResetAll();
+}
+
+void Logic(){
+
+    Keyboard();
+
+    CheckUnitys();
 
     if(counter > 5){
         if(tick < 20){
             for(int i=0; i<aliens.size(); i++){
                 aliens[i].Move(7*dirx, 0);
+                if(aliens[i].rect.y > 200){
+                    Loose();
+                }
             }
         }else{
             for(int i=0; i<aliens.size(); i++){
