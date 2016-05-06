@@ -7,6 +7,7 @@
 #include <SDL/SDL.h>
 
 Spaceship::Spaceship(){
+    isAlive = true;
     lifes = 3;
     rect.x = 450;
     rect.y = 450;
@@ -15,7 +16,7 @@ Spaceship::Spaceship(){
 }
 
 void Spaceship::Shot(std::vector<Bullet> &ls){
-    ls.push_back(Bullet(rect.x, rect.y));
+    ls.push_back(Bullet(rect.x+10, rect.y));
 }
 
 void Spaceship::Damage(){

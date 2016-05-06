@@ -5,6 +5,7 @@
 #include <iostream>
 
 Alien::Alien(){
+    isAlive = true;
     rect = {25, 25, 25, 25};
     dirx = 1;
     diry = 1;

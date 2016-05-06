@@ -6,9 +6,9 @@
 class Block : public GameObject
 {
     public:
-        unsigned int life;
-        Block();
-        bool Damage();
+        unsigned int life, type;
+        Block(int x, int y, int type);
+        void Damage();
 };
 
 #endif // BLOCK_H

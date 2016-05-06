@@ -16,9 +16,10 @@
 #include "AlienBullet.h"
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 
 //Engine variables
-SDL_Surface *screen=NULL;
+SDL_Surface *screen=NULL, *spritesheet=NULL;
 SDL_Event event;
 
 //Engine methods
@@ -26,6 +27,15 @@ void Load();
 void Logic();
 void DrawScreen();
 void Quit();
+
+//SPRITES
+struct Sprites{
+    SDL_Rect alien1[2], alien2[2], alien3[2];
+    SDL_Rect player;
+    SDL_Rect blocks[3][4];
+};
+
+Sprites sprites;
 
 //Variables
 Spaceship player;
@@ -76,15 +86,53 @@ void Load(){
     srand(static_cast<unsigned int>(time(0)));
 
     SDL_Init(SDL_INIT_EVERYTHING);
+    IMG_Init(IMG_INIT_PNG);
 
     screen = SDL_SetVideoMode(600, 500, 32, SDL_SWSURFACE);
 
-    blocks.push_back(Block());
     for(int j=0; j<5; j++){
         for(int i=0; i<11; i++){
             aliens.push_back(Alien(35*i+35, 35*j+35));
         }
     }
+
+    for(int k=1; k<5; k++){
+        /*for(int i=1; i<4; i++){
+            blocks.push_back(Block(20*i+99*k, 1+340, 0));
+        }
+        for(int j=1; j<3; j++){
+            for(int i=1; i<4; i++){
+                if(i!=2)
+                    blocks.push_back(Block(20*i+99*k, 20*j+340, 0));
+            }
+        }*/
+        for(int j=0; j<4; j++){
+            for(int i=0; i<4; i++){
+                blocks.push_back(Block(20*i+99*k, 20*j+340, 0));
+            }
+        }
+    }
+
+    spritesheet = IMG_Load("sprites/space_invaders.png");
+
+    sprites.alien1[0] = {7, 225, 16, 16};
+    sprites.alien2[0] = {74, 225, 24, 16};
+    sprites.alien3[0] = {147, 225, 24, 16};
+    sprites.player = {277, 225, 32, 16};
+    sprites.blocks[0][0] = {373, 210, 12, 12};
+    sprites.blocks[0][1] = {428, 209, 12, 12};
+    sprites.blocks[0][2] = {480, 210, 12, 12};
+    sprites.blocks[0][3] = {316, 212, 12, 12};
+
+    sprites.blocks[1][0] = {428+12, 209, 12, 12};
+    sprites.blocks[1][1] = {373+12, 210, 12, 12};
+    sprites.blocks[1][2] = {480+12, 210, 12, 12};
+    sprites.blocks[1][3] = {316+12, 212, 12, 12};
+
+    sprites.blocks[2][0] = {480+12*3, 210, 12, 12};
+    sprites.blocks[2][1] = {480+12*3, 210, 12, 12};
+    sprites.blocks[2][2] = {480+12*3, 210, 12, 12};
+    sprites.blocks[2][3] = {480+12*3, 210, 12, 12};
 
 }
 
@@ -99,6 +147,12 @@ void Logic(){
         player.Move(10, 0);
     }
 
+    if(player.rect.x < 10){
+        player.rect.x = 11;
+    }else if(player.rect.x > 480){
+        player.rect.x = 479;
+    }
+
     if(keystates[SDLK_SPACE] && toshoot > 25){
         player.Shot(bullets);
         toshoot = 0;
@@ -107,16 +161,15 @@ void Logic(){
     for(int i=0; i<bullets.size(); i++){
         bullets[i].Move();
         for(int j=0; j<blocks.size(); j++){
-            if(bullets[i].Intersects(blocks[j].rect)){
-                if(blocks[j].Damage()){
-                    blocks.erase(blocks.begin()+j);
-                }
+            if(bullets[i].Intersects(blocks[j].rect) && blocks[j].life > 0){
+                blocks[j].Damage();
                 bullets.erase(bullets.begin()+i);
+                return;
             }
         }
         for(int j=0; j<aliens.size(); j++){
-            if(bullets[i].Intersects(aliens[j].rect)){
-                aliens.erase(aliens.begin()+j);
+            if(aliens[j].isAlive && bullets[i].Intersects(aliens[j].rect)){
+                aliens[j].isAlive = false;
                 bullets.erase(bullets.begin() + i);
             }
         }
@@ -129,9 +182,7 @@ void Logic(){
         ebullets[i].Move();
         for(int j=0; j<blocks.size(); j++){
             if(ebullets[i].Intersects(blocks[j].rect)){
-                if(blocks[j].Damage()){
-                    blocks.erase(blocks.begin()+j);
-                }
+                blocks[j].Damage();
                 ebullets.erase(ebullets.begin()+i);
             }
         }
@@ -159,21 +210,24 @@ void Logic(){
         tick++;
     }
 
-    if(rand()%800+1>788){
-        aliens[rand()%aliens.size()].Shot(ebullets);
+    unsigned int rindex = rand()%aliens.size();
+
+    if(rand()%800+1>788 && aliens[rindex].isAlive){
+        aliens[rindex].Shot(ebullets);
     }
 
     counter++;
     toshoot++;
-    std::cout << ebullets.size() << "\n";
+   // std::cout << ebullets.size() << "\n";
 
 }
+
 
 void DrawScreen(){
 
     SDL_FillRect(screen, NULL, 0);
 
-    SDL_FillRect(screen, &player.rect, 255);
+    SDL_BlitSurface(spritesheet, &sprites.player, screen, &player.rect);
 
     for(int i=0; i<bullets.size(); i++){
         SDL_FillRect(screen, &bullets[i].rect, 253);
@@ -184,11 +238,28 @@ void DrawScreen(){
     }
 
     for(int i=0; i<blocks.size(); i++){
-        SDL_FillRect(screen, &blocks[i].rect, 0x0000dd00);
+        if(blocks[i].life > 0){
+            if(i%10>7){
+                SDL_BlitSurface(spritesheet, &sprites.blocks[1][blocks[i].life-1], screen, &blocks[i].rect);
+            }else if(i%10<3){
+                SDL_BlitSurface(spritesheet, &sprites.blocks[1][blocks[i].life-1], screen, &blocks[i].rect);
+            }else{
+                SDL_BlitSurface(spritesheet, &sprites.blocks[1][blocks[i].life-1], screen, &blocks[i].rect);
+            }
+        }
     }
 
     for(int i=0; i<aliens.size(); i++){
-        SDL_FillRect(screen, &aliens[i].rect, 0x006d6d6d);
+        if(aliens[i].isAlive){
+            if(i <= 22){
+                SDL_BlitSurface(spritesheet, &sprites.alien1[0], screen, &aliens[i].rect);
+            }else if(i > 22 && i <= 43){
+                SDL_BlitSurface(spritesheet, &sprites.alien2[0], screen, &aliens[i].rect);
+            }else if(i > 43 && i <= 55){
+                SDL_BlitSurface(spritesheet, &sprites.alien3[0], screen, &aliens[i].rect);
+            }
+        }
+        //SDL_FillRect(screen, &aliens[i].rect, 0x006d6d6d);
     }
 
     SDL_Flip(screen);
@@ -196,5 +267,8 @@ void DrawScreen(){
 }
 
 void Quit(){
+    SDL_FreeSurface(spritesheet);
+    SDL_FreeSurface(screen);
+    IMG_Quit();
     SDL_Quit();
 }

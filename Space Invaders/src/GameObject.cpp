@@ -4,6 +4,7 @@
 
 GameObject::GameObject()
 {
+    isAlive = true;
     rect.x = 20;
     rect.y = 250;
     rect.h = 200;

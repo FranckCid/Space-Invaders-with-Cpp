@@ -32,15 +32,24 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="`sdl-config --libs`" />
+			<Add option="`sdl-config --libs` -lSDL -lSDL_image" />
 		</Compiler>
 		<Linker>
-			<Add option="`sdl-config --libs`" />
+			<Add option="`sdl-config --libs` -lSDL -lSDL_image" />
 		</Linker>
 		<Unit filename="cb.bmp" />
+		<Unit filename="include/Alien.h" />
+		<Unit filename="include/AlienBullet.h" />
+		<Unit filename="include/Block.h" />
+		<Unit filename="include/Bullet.h" />
 		<Unit filename="include/GameObject.h" />
 		<Unit filename="include/Spaceship.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="sprites/space_invaders.png" />
+		<Unit filename="src/Alien.cpp" />
+		<Unit filename="src/AlienBullet.cpp" />
+		<Unit filename="src/Block.cpp" />
+		<Unit filename="src/Bullet.cpp" />
 		<Unit filename="src/GameObject.cpp" />
 		<Unit filename="src/Spaceship.cpp" />
 		<Extensions>

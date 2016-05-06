@@ -7,6 +7,7 @@ class GameObject
 {
     public:
         int dirx, diry;
+        bool isAlive;
         SDL_Rect rect;
         GameObject();
         void Move(int velx, int vely);

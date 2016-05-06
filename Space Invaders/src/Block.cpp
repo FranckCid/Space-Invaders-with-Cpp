@@ -2,17 +2,19 @@
 
 #include "GameObject.h"
 
-Block::Block()
+Block::Block(int x, int y, int t)
 {
-    life = 10;
-    rect = {250, 250, 20, 20};
+    isAlive = true;
+    life = 4;
+    rect = {x, y, 25, 25};
+    type = t;
 }
 
-bool Block::Damage(){
-    if(life >=1){
+void Block::Damage(){
+    if(life > 0){
         life--;
-        return false;
+        return;
     }
-    return true;
+    isAlive = false;
 }
 
