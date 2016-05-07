@@ -9,6 +9,7 @@
 Spaceship::Spaceship(){
     isAlive = true;
     lifes = 3;
+    score = 0;
     rect.x = 450;
     rect.y = 450;
     rect.h = 25;

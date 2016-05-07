@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <time.h>
+#include <stdio.h>
 
 #include "GameObject.h"
 #include "Spaceship.h"
@@ -17,10 +18,16 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
 
 //Engine variables
 SDL_Surface *screen=NULL, *spritesheet=NULL;
 SDL_Event event;
+
+//Interface
+TTF_Font *font=NULL;
+SDL_Rect rscore, rpoints, rlives, rlifes;
+SDL_Surface *sscore, *spoints, *slives;
 
 //Game Methods
 void LoadSprites();
@@ -94,8 +101,19 @@ void Load(){
 
     SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(IMG_INIT_PNG);
+    TTF_Init();
 
     screen = SDL_SetVideoMode(600, 500, 32, SDL_SWSURFACE);
+
+    font = TTF_OpenFont("Munro.ttf", 32);
+    sscore = TTF_RenderText_Solid(font, "Score:", {255,255,255});
+    spoints = TTF_RenderText_Solid(font, "10", {255,255,255});
+    slives = TTF_RenderText_Solid(font, "Lives:", {255,255,255});
+
+    rscore = {25, 10, 200, 200};
+    rpoints = {120, 10, 200, 200};
+    rlives = {350, 10, 200, 200};
+    rlifes = {450, 15, 200, 200};
 
     LoadSprites();
 
@@ -109,11 +127,17 @@ void LoadSprites(){
     sprites.alien1[0] = {7, 225, 16, 16};
     sprites.alien2[0] = {74, 225, 24, 16};
     sprites.alien3[0] = {147, 225, 24, 16};
+
+    sprites.alien1[1] = {40, 225, 16, 16};
+    sprites.alien2[1] = {108, 225, 24, 16};
+    sprites.alien3[1] = {178, 225, 24, 16};
+
     sprites.player = {277, 225, 32, 16};
+
     sprites.blocks[0][0] = {373, 210, 16, 16};
     sprites.blocks[0][1] = {428, 209, 16, 16};
     sprites.blocks[0][2] = {480, 210, 16, 16};
-    sprites.blocks[0][3] = {316, 212, 16, 16};
+    sprites.blocks[0][3] = {316, 214, 16, 16};
 
     sprites.blocks[1][0] = {428+12, 209, 16, 16};
     sprites.blocks[1][1] = {373+12, 210, 16, 16};
@@ -166,6 +190,11 @@ void CheckUnitys(){
         for(int j=0; j<aliens.size(); j++){
             if(aliens[j].isAlive && bullets[i].Intersects(aliens[j].rect)){
                 aliens[j].isAlive = false;
+                player.score += 500;
+                char buffer[500];
+                sprintf(buffer, "%d", player.score);
+                std::cout << buffer << player.score << "\n";
+                spoints = TTF_RenderText_Solid(font, buffer, {255,255,255});
                 bullets.erase(bullets.begin() + i);
                 return;
             }
@@ -229,7 +258,7 @@ void Logic(){
         if(tick < 20){
             for(int i=0; i<aliens.size(); i++){
                 aliens[i].Move(7*dirx, 0);
-                if(aliens[i].rect.y > 200){
+                if(aliens[i].rect.y > 400){
                     Loose();
                 }
             }
@@ -256,6 +285,17 @@ void Logic(){
 
 }
 
+void Interface(){
+    SDL_BlitSurface(sscore, NULL, screen, &rscore);
+    SDL_BlitSurface(spoints, NULL, screen, &rpoints);
+    SDL_BlitSurface(slives, NULL, screen, &rlives);
+    for(int i=0; i<player.lifes; i++){
+        rlifes.x += 30;
+        SDL_BlitSurface(spritesheet, &sprites.player, screen, &rlifes);
+    }
+    rlifes.x = 400;
+}
+
 void DrawScreen(){
 
     SDL_FillRect(screen, NULL, 0);
@@ -279,14 +319,16 @@ void DrawScreen(){
     for(int i=0; i<aliens.size(); i++){
         if(aliens[i].isAlive){
             if(i <= 22){
-                SDL_BlitSurface(spritesheet, &sprites.alien1[0], screen, &aliens[i].rect);
+                SDL_BlitSurface(spritesheet, &sprites.alien1[rand()%2], screen, &aliens[i].rect);
             }else if(i > 22 && i <= 43){
-                SDL_BlitSurface(spritesheet, &sprites.alien2[0], screen, &aliens[i].rect);
+                SDL_BlitSurface(spritesheet, &sprites.alien2[rand()%2], screen, &aliens[i].rect);
             }else if(i > 43 && i <= 55){
-                SDL_BlitSurface(spritesheet, &sprites.alien3[0], screen, &aliens[i].rect);
+                SDL_BlitSurface(spritesheet, &sprites.alien3[rand()%2], screen, &aliens[i].rect);
             }
         }
     }
+
+    Interface();
 
     SDL_Flip(screen);
 
@@ -295,6 +337,7 @@ void DrawScreen(){
 void Quit(){
     SDL_FreeSurface(spritesheet);
     SDL_FreeSurface(screen);
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 }

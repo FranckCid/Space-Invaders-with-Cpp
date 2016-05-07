@@ -11,7 +11,7 @@
 class Spaceship : public GameObject
 {
     public:
-        int lifes;
+        int lifes, score;
         Spaceship();
         void Shot(std::vector<Bullet> &ls);
         void Damage();
