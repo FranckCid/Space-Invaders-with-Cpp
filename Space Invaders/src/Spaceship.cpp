@@ -16,7 +16,7 @@ Spaceship::Spaceship(){
 }
 
 void Spaceship::Shot(std::vector<Bullet> &ls){
-    ls.push_back(Bullet(rect.x+10, rect.y));
+    ls.push_back(Bullet(rect.x+13, rect.y));
 }
 
 void Spaceship::Damage(){

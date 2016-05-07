@@ -39,6 +39,7 @@ struct Sprites{
     SDL_Rect alien1[2], alien2[2], alien3[2];
     SDL_Rect player;
     SDL_Rect blocks[3][4];
+    SDL_Rect pbullet, ebullet[2];
 };
 
 Sprites sprites;
@@ -109,20 +110,25 @@ void LoadSprites(){
     sprites.alien2[0] = {74, 225, 24, 16};
     sprites.alien3[0] = {147, 225, 24, 16};
     sprites.player = {277, 225, 32, 16};
-    sprites.blocks[0][0] = {373, 210, 12, 12};
-    sprites.blocks[0][1] = {428, 209, 12, 12};
-    sprites.blocks[0][2] = {480, 210, 12, 12};
-    sprites.blocks[0][3] = {316, 212, 12, 12};
+    sprites.blocks[0][0] = {373, 210, 16, 16};
+    sprites.blocks[0][1] = {428, 209, 16, 16};
+    sprites.blocks[0][2] = {480, 210, 16, 16};
+    sprites.blocks[0][3] = {316, 212, 16, 16};
 
-    sprites.blocks[1][0] = {428+12, 209, 12, 12};
-    sprites.blocks[1][1] = {373+12, 210, 12, 12};
-    sprites.blocks[1][2] = {480+12, 210, 12, 12};
-    sprites.blocks[1][3] = {316+12, 212, 12, 12};
+    sprites.blocks[1][0] = {428+12, 209, 16, 16};
+    sprites.blocks[1][1] = {373+12, 210, 16, 16};
+    sprites.blocks[1][2] = {480+12, 210, 16, 16};
+    sprites.blocks[1][3] = {316+12, 212, 16, 16};
 
-    sprites.blocks[2][0] = {480+12*3, 210, 12, 12};
-    sprites.blocks[2][1] = {480+12*3, 210, 12, 12};
-    sprites.blocks[2][2] = {480+12*3, 210, 12, 12};
-    sprites.blocks[2][3] = {480+12*3, 210, 12, 12};
+    sprites.blocks[2][0] = {480+12*3, 210, 16, 16};
+    sprites.blocks[2][1] = {480+12*3, 210, 16, 16};
+    sprites.blocks[2][2] = {480+12*3, 210, 16, 16};
+    sprites.blocks[2][3] = {480+12*3, 210, 16, 16};
+
+    sprites.pbullet = {201, 606, 2, 10};
+    sprites.ebullet[0] = {172, 609, 8, 8};
+    sprites.ebullet[1] = {172, 630, 8, 8};
+
 }
 
 int tick=0, counter=0, dirx=1, toshoot=0;
@@ -161,10 +167,12 @@ void CheckUnitys(){
             if(aliens[j].isAlive && bullets[i].Intersects(aliens[j].rect)){
                 aliens[j].isAlive = false;
                 bullets.erase(bullets.begin() + i);
+                return;
             }
         }
         if(bullets[i].rect.y < 0){
             bullets.erase(bullets.begin() + i);
+            return;
         }
     }
 
@@ -174,13 +182,15 @@ void CheckUnitys(){
             if(ebullets[i].Intersects(blocks[j].rect)){
                 blocks[j].Damage();
                 ebullets.erase(ebullets.begin()+i);
+                return;
             }
         }
         if(ebullets[i].Intersects(player.rect)){
             player.Damage();
         }
-        if(ebullets[i].rect.y > 500){
+        if(ebullets[i].rect.y > 700){
             ebullets.erase(ebullets.begin() + i);
+            return;
         }
     }
 }
@@ -198,7 +208,7 @@ void ResetAll(){
     for(int k=1; k<5; k++){
         for(int j=0; j<4; j++){
             for(int i=0; i<4; i++){
-                blocks.push_back(Block(20*i+99*k, 20*j+340, 0));
+                blocks.push_back(Block(15*i+99*k, 12*j+340, 0));
             }
         }
     }
@@ -246,7 +256,6 @@ void Logic(){
 
 }
 
-
 void DrawScreen(){
 
     SDL_FillRect(screen, NULL, 0);
@@ -254,22 +263,16 @@ void DrawScreen(){
     SDL_BlitSurface(spritesheet, &sprites.player, screen, &player.rect);
 
     for(int i=0; i<bullets.size(); i++){
-        SDL_FillRect(screen, &bullets[i].rect, 253);
+        SDL_BlitSurface(spritesheet, &sprites.pbullet, screen, &bullets[i].rect);
     }
 
     for(int i=0; i<ebullets.size(); i++){
-        SDL_FillRect(screen, &ebullets[i].rect, 253);
+        SDL_BlitSurface(spritesheet, &sprites.ebullet[rand()%2], screen, &ebullets[i].rect);
     }
 
     for(int i=0; i<blocks.size(); i++){
         if(blocks[i].life > 0){
-            if(i%10>7){
-                SDL_BlitSurface(spritesheet, &sprites.blocks[1][blocks[i].life-1], screen, &blocks[i].rect);
-            }else if(i%10<3){
-                SDL_BlitSurface(spritesheet, &sprites.blocks[1][blocks[i].life-1], screen, &blocks[i].rect);
-            }else{
-                SDL_BlitSurface(spritesheet, &sprites.blocks[1][blocks[i].life-1], screen, &blocks[i].rect);
-            }
+            SDL_BlitSurface(spritesheet, &sprites.blocks[1][blocks[i].life-1], screen, &blocks[i].rect);
         }
     }
 
@@ -283,7 +286,6 @@ void DrawScreen(){
                 SDL_BlitSurface(spritesheet, &sprites.alien3[0], screen, &aliens[i].rect);
             }
         }
-        //SDL_FillRect(screen, &aliens[i].rect, 0x006d6d6d);
     }
 
     SDL_Flip(screen);
