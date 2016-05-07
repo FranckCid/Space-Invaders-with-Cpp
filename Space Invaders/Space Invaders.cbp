@@ -32,11 +32,12 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="`sdl-config --libs` -lSDL -lSDL_image" />
+			<Add option="`sdl-config --libs` -lSDL -lSDL_image -lSDL_ttf" />
 		</Compiler>
 		<Linker>
-			<Add option="`sdl-config --libs` -lSDL -lSDL_image" />
+			<Add option="`sdl-config --libs` -lSDL -lSDL_image -lSDL_ttf" />
 		</Linker>
+		<Unit filename="Munro.ttf" />
 		<Unit filename="cb.bmp" />
 		<Unit filename="include/Alien.h" />
 		<Unit filename="include/AlienBullet.h" />

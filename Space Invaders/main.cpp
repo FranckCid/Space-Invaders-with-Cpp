@@ -58,6 +58,34 @@ std::vector<AlienBullet> ebullets;
 std::vector<Block> blocks;
 std::vector<Alien> aliens;
 
+void Menu(){
+    SDL_Surface *sur=NULL;
+    sur = TTF_RenderText_Solid(font, "Press any button to continue", {255, 255,255,255});
+    SDL_Rect nr = {30, 250, 0, 0};
+    while(1){
+        SDL_PollEvent(&event);
+        SDL_BlitSurface(sur, NULL, screen, &nr);
+        SDL_Flip(screen);
+        if(event.type == SDL_KEYDOWN){
+            return;
+        }
+    }
+}
+
+void GameOver(){
+    SDL_Surface *sur=NULL;
+    sur = TTF_RenderText_Solid(font, "Game Over", {255, 255,255,255});
+    SDL_Rect nr = {30, 250, 0, 0};
+    while(1){
+        SDL_PollEvent(&event);
+        SDL_BlitSurface(sur, NULL, screen, &nr);
+        SDL_Flip(screen);
+        if(event.type == SDL_KEYDOWN){
+            return;
+        }
+    }
+}
+
 int main ( int argc, char** argv )
 {
 
@@ -66,6 +94,8 @@ int main ( int argc, char** argv )
     float frame=0;
 
     Load();
+
+    Menu();
 
     while(1){
 
@@ -171,7 +201,7 @@ void Keyboard(){
         player.rect.x = 479;
     }
 
-    if(keystates[SDLK_SPACE] && toshoot > 25){
+    if(keystates[SDLK_SPACE] && toshoot > 15){
         player.Shot(bullets);
         toshoot = 0;
     }
@@ -216,6 +246,8 @@ void CheckUnitys(){
         }
         if(ebullets[i].Intersects(player.rect)){
             player.Damage();
+            ebullets.erase(ebullets.begin()+i);
+            return;
         }
         if(ebullets[i].rect.y > 700){
             ebullets.erase(ebullets.begin() + i);
@@ -241,10 +273,13 @@ void ResetAll(){
             }
         }
     }
+    player.lifes = 3;
+    player.score = 0;
 }
 
 void Loose(){
     std::cout << "YOU LOOSE, CHANGE SCENE\n";
+    GameOver();
     ResetAll();
 }
 
@@ -275,8 +310,12 @@ void Logic(){
 
     unsigned int rindex = rand()%aliens.size();
 
-    if(rand()%800+1>788 && aliens[rindex].isAlive){
+    if(rand()%800+1>785 && aliens[rindex].isAlive){
         aliens[rindex].Shot(ebullets);
+    }
+
+    if(player.lifes <= 0){
+        Loose();
     }
 
     counter++;
