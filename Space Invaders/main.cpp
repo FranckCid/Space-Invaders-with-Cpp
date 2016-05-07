@@ -57,6 +57,7 @@ std::vector<Bullet> bullets;
 std::vector<AlienBullet> ebullets;
 std::vector<Block> blocks;
 std::vector<Alien> aliens;
+std::vector<unsigned int> highscores;
 
 void Menu(){
     SDL_Surface *sur=NULL;
@@ -223,7 +224,6 @@ void CheckUnitys(){
                 player.score += 500;
                 char buffer[500];
                 sprintf(buffer, "%d", player.score);
-                std::cout << buffer << player.score << "\n";
                 spoints = TTF_RenderText_Solid(font, buffer, {255,255,255});
                 bullets.erase(bullets.begin() + i);
                 return;
@@ -261,6 +261,11 @@ void ResetAll(){
     bullets.clear();
     blocks.clear();
     ebullets.clear();
+    tick=0;
+    counter=0;
+    dirx=1;
+    toshoot=0;
+    SDL_Delay(500);
     for(int j=0; j<5; j++){
         for(int i=0; i<11; i++){
             aliens.push_back(Alien(35*i+35, 35*j+35));
@@ -278,7 +283,8 @@ void ResetAll(){
 }
 
 void Loose(){
-    std::cout << "YOU LOOSE, CHANGE SCENE\n";
+    //std::cout << "High score: " << highscores[highscores.size()-1];
+    highscores.push_back((unsigned int)player.score);
     GameOver();
     ResetAll();
 }
@@ -293,8 +299,9 @@ void Logic(){
         if(tick < 20){
             for(int i=0; i<aliens.size(); i++){
                 aliens[i].Move(7*dirx, 0);
-                if(aliens[i].rect.y > 400){
+                if(aliens[i].rect.y > 200){
                     Loose();
+                    return;
                 }
             }
         }else{
